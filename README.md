@@ -1,74 +1,107 @@
-## FLW Application Load Testing
-
-This repository contains load testing scripts for the FLW application created using Apache JMeter.
-A separate branch named load-test has been created specifically for performance testing activities.
-
-## Overview
-
-The load testing scripts simulate multiple users interacting with the FLW application APIs to evaluate system performance under concurrent usage.
-
-## Key points:
-Load testing is performed using Apache JMeter
-Test data is supplied using a CSV Data Set Config
-The CSV file contains multiple user credentials used during the test execution
-The test collection includes APIs such as login, user retrieval, beneficiary data, registration, tracking, and other application workflows
-
-## The goal of these tests is to analyze:
-
-Response time
-Throughput
-Error percentage
-System behavior under concurrent load
+# Load Testing Report
 
 
-## This load-test branch contains:
+Load testing was conducted to evaluate how the system behaves under increasing numbers of concurrent users. The tests were executed using different load levels: **50 users, 100 users, 200 users, and 300 users**.
 
-JMeter test plan (.jmx)
-CSV dataset for user credentials
+The objective of this testing was to analyze:
 
-Prerequisites
-Before running the test locally, ensure the following tools are installed:
-Apache JMeter (version 5.x or later)
-Git
-Java (JDK 8 or above)
+* System stability under increasing load
+* API response times
+* Throughput (requests processed per second)
+* Error rates during execution
+The results help identify the **performance limits of the system** and determine the load level at which performance degradation begins.
 
-You can verify installations using:
-java -version
-jmeter -v
-git --version
 
-## How to Clone the Repository
 
-Clone the repository using the following command:
-```
-git clone <repository-url>
-```
+### Example approach:
 
-Navigate to the project directory:
-```
-cd your-repository-name
-```
+# Test 1 – 50 Concurrent Users
 
-Switch to the load-test branch:
-```
-git checkout load-test
-```
-## Running the Load Test Locally
-## Step 1: Open JMeter
-Launch Apache JMeter.
+## Test Summary
 
-## Step 2: Open the Test Plan
-Open the .jmx file located in the repository:
+| Metric                | Value            |
+| --------------------- | ---------------- |
+| Total Requests        | 2000             |
+| Average Response Time | 78 ms            |
+| Maximum Response Time | 1486 ms          |
+| Throughput            | 155 requests/sec |
+| Error Rate            | 2.50%            |
 
-File → Open → select the JMeter test plan (.jmx)
+## Error Analysis
 
-## Step 3: Verify CSV Dataset
-Ensure the CSV Data Set Config is correctly pointing to the dataset file containing user credentials.
+| Endpoint       | Error Rate |
+| -------------- | ---------- |
+| HYBC Save All  | 100%       |
+| Overall System | ~2.5%      |
 
-## Step 4: Run the Test
-Click the Start (▶) button in JMeter to begin executing the load test.
+The **HYBC Save All** endpoint consistently failed during the test beacause it is representing the 400 bad request error from the imported collection, indicating a potential issue with that specific API.
 
-## Step 5: View Results
-You can monitor results using:
-View Results Tree
-Summary Report
+
+# Test 2 – 100 Concurrent Users
+
+## Test Summary
+
+| Metric                | Value            |
+| --------------------- | ---------------- |
+| Total Requests        | 4000             |
+| Average Response Time | ~100 ms          |
+| Maximum Response Time | 3249 ms          |
+| Throughput            | 169 requests/sec |
+| Error Rate            | 2.53%            |
+
+## Error Analysis
+
+| Endpoint       | Error Rate |
+| -------------- | ---------- |
+| HYBC Save All  | 100%       |
+| Login          | 1%         |
+| Overall System | 2.53%      |
+
+A small increase in errors was observed when the number of users doubled.
+---
+
+# Test 3 – 200 Concurrent Users
+
+## Test Summary
+
+| Metric                | Value            |
+| --------------------- | ---------------- |
+| Total Requests        | 8000             |
+| Average Response Time | 95 ms            |
+| Maximum Response Time | 2325 ms          |
+| Throughput            | 185 requests/sec |
+| Error Rate            | 2.55%            |
+
+## Error Analysis
+
+| Endpoint                 | Error Rate |
+| ------------------------ | ---------- |
+| HYBC Save All            | 100%       |
+| Get Incentive Management | 2%         |
+| Overall System           | 2.55%      |
+
+---
+
+# Test 4 – 300 Concurrent Users
+
+## Test Summary
+
+| Metric                | Value            |
+| --------------------- | ---------------- |
+| Total Requests        | 12,000           |
+| Maximum Response Time | 9201 ms          |
+| Throughput            | 160 requests/sec |
+| Error Rate            | 5.10%            |
+
+## Error Analysis
+
+| API                      | Error Rate |
+| ------------------------ | ---------- |
+| Login                    | 42.67%     |
+| HYBC Save All            | 100%       |
+| Get Incentive Management | 43%        |
+| Get Beneficiary          | 18.33%     |
+
+
+
+The load testing results indicate that the system performs efficiently under **50–100 concurrent users**. Performance begins to degrade at **200 users**, where latency increases and minor errors appear.
