@@ -1,124 +1,136 @@
-# FLW Application Performance Testing
+# Endurance Testing Report
 
-This repository contains **performance testing scripts** for the FLW application created using **Apache JMeter**.
-The project is organized using **separate branches for different types of performance tests** such as Load Testing and Spike Testing.
-The goal of this repository is to evaluate the **performance, scalability, and reliability** of the FLW application under different traffic conditions.
+Endurance testing (also known as **Soak Testing**) was conducted to evaluate how the system behaves when it is subjected to a **steady load for a long duration**. Unlike stress testing, which pushes the system beyond its limits, endurance testing focuses on **long-term stability and performance degradation over time**.
 
+The tests were executed with increasing numbers of concurrent users running continuously for extended durations to simulate **real-world sustained system usage**.
 
+The endurance tests were performed with:
 
-# Performance Test Types
-Currently the repository includes the following performance testing types:
+- **100 users**
+- **150 users**
+- **200 users**
+- **300 users**
 
-| Test Type     | Description                                                          | Branch       |
-| ------------- | -------------------------------------------------------------------- | ------------ |
-| Load Testing  | Tests system performance under gradually increasing concurrent users | `load-test`  |
-| Spike Testing | Tests system behavior when sudden spikes in traffic occur            | `spike-test` |
+---
 
-If you want to run a specific type of test, switch to the corresponding branch.
-Example:
-```
-git checkout load-test
-```
+# Objectives of Endurance Testing
 
-# Overview
-The performance tests simulate **multiple users interacting with FLW application APIs** to evaluate system behavior under concurrent usage.
-These tests help analyze how the system performs when handling large numbers of requests simultaneously.
+The objective of this testing was to analyze:
 
+- System stability during long-running operations  
+- Performance degradation over time  
+- Memory leaks and resource exhaustion  
+- Response time consistency under sustained load  
+- Error rates during prolonged system usage  
 
-# Key Points
-* Performance testing is implemented using **Apache JMeter**
-* Test data is provided using **CSV Data Set Config**
-* The CSV file contains **multiple user credentials used during execution**
-* The test suite includes several application APIs and workflows
+These results help determine whether the system can **maintain stable performance during extended user activity**.
 
-Example APIs covered in testing include:
+---
 
-* Login
-* Get User
-* Get Profile
-* Beneficiary Data
-* Registration APIs
-* Incentive Management APIs
-* Other application workflows
+# Test 1 – 100 Concurrent Users
 
-# Testing Objectives
-The main goal of these tests is to measure:
-* **Response Time** – How quickly the system responds to requests
-* **Throughput** – Number of requests processed per second
-* **Error Rate** – Percentage of failed requests
-* **System Stability** – How the system behaves under concurrent user load
+## Test Configuration
 
+| Parameter | Value |
+|----------|------|
+| Number of Threads (Users) | 100 |
+| Ramp-up Period | 60 seconds |
+| Loop Count | Forever |
+| Duration | 20 minutes |
 
-# Repository Structure
-Each testing type is maintained in a **separate branch** to keep scripts organized.
+This test evaluates the system behavior under a **moderate sustained workload**.
 
-| Branch       | Contents                                  |
-| ------------ | ----------------------------------------- |
-| `load-test`  | Load testing JMeter scripts and datasets  |
-| `spike-test` | Spike testing JMeter scripts and datasets |
+Possible observations include:
 
-Each branch typically contains:
+- Gradual increase in response time  
+- Occasional request failures  
+- Performance fluctuations under sustained load  
 
-* JMeter Test Plan (`.jmx`)
-* CSV dataset containing user credentials
-* Supporting configuration files
+---
 
+# Test 2 – 150 Concurrent Users
 
-# Prerequisites
-Before running the tests locally, ensure the following tools are installed:
+## Test Configuration
 
-* **Apache JMeter (version 5.x or later)**
-* **Java (JDK 8 or above)**
-* **Git**
+| Parameter | Value |
+|----------|------|
+| Number of Threads (Users) | 150 |
+| Ramp-up Period | 60 seconds |
+| Loop Count | Forever |
+| Duration | 25 minutes |
 
-You can verify the installations using:
-```
-java -version
-jmeter -v
-git --version
-```
+This test increases the sustained workload to observe system performance under **higher continuous traffic**.
 
-# How to Clone the Repository
-Clone the repository using:
-```
-git clone <repository-url>
-``
+Possible observations include:
 
-Navigate into the project directory:
-```
-cd <repository-name>
-```
-# How to Run Load Tests
-If you want to execute **Load Testing**, switch to the `load-test` branch:
+- Increased response times  
+- Higher server resource utilization  
+- Occasional request timeouts  
+- Slight increase in failure rates  
 
-```
-git checkout load-test
-```
+---
 
-# Running the Test Locally
-## Step 1 — Open JMeter
-Launch **Apache JMeter** on your system.
+# Test 3 – 200 Concurrent Users
 
+## Test Configuration
 
+| Parameter | Value |
+|----------|------|
+| Number of Threads (Users) | 200 |
+| Ramp-up Period | 120 seconds |
+| Loop Count | Forever |
+| Duration | 30 minutes |
 
-## Step 2 — Open the Test Plan
-Open the JMeter test plan file:
-```
-File → Open → Select the .jmx file
-```
+At this stage the system is exposed to **heavier long-duration traffic conditions**.
 
-## Step 3 — Verify CSV Dataset
-Ensure the **CSV Data Set Config** correctly references the dataset file containing the user credentials.
+Possible observations include:
 
+- Significant increase in response times  
+- Increased error rates  
+- Resource exhaustion over time  
+- Throughput fluctuations  
 
-## Step 4 — Run the Test
-Click the **Start (▶) button** in JMeter to begin executing the test.
+---
 
+# Test 4 – 300 Concurrent Users
 
-## Step 5 — View Results
-You can monitor the test results using the following JMeter listeners:
-* **View Results Tree**
-* **Summary Report**
-* **Aggregate Report**
+## Test Configuration
 
-These reports provide insights into response time, throughput, and error percentages during the test execution.
+| Parameter | Value |
+|----------|------|
+| Number of Threads (Users) | 300 |
+| Ramp-up Period | 180 seconds |
+| Loop Count | Forever |
+| Duration | 40 minutes |
+
+This test represents **heavy sustained load conditions**.
+
+Possible observations include:
+
+- Higher latency and response time spikes  
+- Increased request failure rates  
+- Reduced throughput over time  
+- Infrastructure resource limitations  
+
+---
+
+# Endurance Test Summary
+
+| Users | Ramp-up | Duration |
+|------|--------|---------|
+| 100 | 60 sec | 20 min |
+| 150 | 60 sec | 25 min |
+| 200 | 120 sec | 30 min |
+| 300 | 180 sec | 40 min |
+
+---
+
+# Conclusion
+
+The endurance testing results help evaluate the system’s **long-term reliability under sustained traffic conditions**.
+
+As the number of users increases and the system continues running for longer durations, the application may experience:
+
+- Gradual performance degradation  
+- Increased response times  
+- Higher failure rates under sustained load  
