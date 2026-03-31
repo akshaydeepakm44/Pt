@@ -1,124 +1,200 @@
-# FLW Application Performance Testing
-
-This repository contains **performance testing scripts** for the FLW application created using **Apache JMeter**.
-The project is organized using **separate branches for different types of performance tests** such as Load Testing and Spike Testing.
-The goal of this repository is to evaluate the **performance, scalability, and reliability** of the FLW application under different traffic conditions.
-
-
-
-# Performance Test Types
-Currently the repository includes the following performance testing types:
-
-| Test Type     | Description                                                          | Branch       |
-| ------------- | -------------------------------------------------------------------- | ------------ |
-| Load Testing  | Tests system performance under gradually increasing concurrent users | `load-test`  |
-| Spike Testing | Tests system behavior when sudden spikes in traffic occur            | `spike-test` |
-
-If you want to run a specific type of test, switch to the corresponding branch.
-Example:
-```
-git checkout load-test
-```
+#  End-to-End (E2E) Spike Testing Report
 
 # Overview
-The performance tests simulate **multiple users interacting with FLW application APIs** to evaluate system behavior under concurrent usage.
-These tests help analyze how the system performs when handling large numbers of requests simultaneously.
 
+End-to-End Spike Testing was conducted to evaluate system performance under **sudden traffic surges** using **Ultimate Thread Group in Apache JMeter**.
 
-# Key Points
-* Performance testing is implemented using **Apache JMeter**
-* Test data is provided using **CSV Data Set Config**
-* The CSV file contains **multiple user credentials used during execution**
-* The test suite includes several application APIs and workflows
+The test simulated realistic enterprise-level traffic spikes including:
 
-Example APIs covered in testing include:
+- Baseline Load
+- Sudden Traffic Spike
+- Traffic Drop
+- Peak Spike
+- Gradual Shutdown
 
-* Login
-* Get User
-* Get Profile
-* Beneficiary Data
-* Registration APIs
-* Incentive Management APIs
-* Other application workflows
+The objective was to analyze how the system behaves under **unexpected load changes** and evaluate system recovery capability.
 
-# Testing Objectives
-The main goal of these tests is to measure:
-* **Response Time** – How quickly the system responds to requests
-* **Throughput** – Number of requests processed per second
-* **Error Rate** – Percentage of failed requests
-* **System Stability** – How the system behaves under concurrent user load
+---
 
+#  Spike Test Configuration
 
-# Repository Structure
-Each testing type is maintained in a **separate branch** to keep scripts organized.
+| Users | Delay | Ramp-up | Hold | Shutdown |
+|-------|-------|--------|------|----------|
+| 30 | 0 | 30 sec | 60 sec | 10 sec |
+| 280 | 1 | 20 sec | 60 sec | 5 sec |
+| 90 | 23 | 10 sec | 70 sec | 2 sec |
+| 400 | 2 | 30 sec | 100 sec | 10 sec |
 
-| Branch       | Contents                                  |
-| ------------ | ----------------------------------------- |
-| `load-test`  | Load testing JMeter scripts and datasets  |
-| `spike-test` | Spike testing JMeter scripts and datasets |
+---
 
-Each branch typically contains:
+#  Traffic Pattern
 
-* JMeter Test Plan (`.jmx`)
-* CSV dataset containing user credentials
-* Supporting configuration files
+This configuration created a **realistic enterprise-level spike pattern**:
 
+- Gradual ramp to ~300 users  
+- Sudden spike to ~800 users  
+- Drop to ~450 users  
+- Final spike to ~400 users  
+- Gradual shutdown  
 
-# Prerequisites
-Before running the tests locally, ensure the following tools are installed:
+Total Peak Concurrent Users ≈ **800 Users**
 
-* **Apache JMeter (version 5.x or later)**
-* **Java (JDK 8 or above)**
-* **Git**
+---
 
-You can verify the installations using:
-```
-java -version
-jmeter -v
-git --version
-```
+#  Testing Objectives
 
-# How to Clone the Repository
-Clone the repository using:
-```
-git clone <repository-url>
-``
+The spike testing aimed to evaluate:
 
-Navigate into the project directory:
-```
-cd <repository-name>
-```
-# How to Run Load Tests
-If you want to execute **Load Testing**, switch to the `load-test` branch:
+- System Stability  
+- API Response Time  
+- Error Rate  
+- Throughput  
+- Recovery Capability  
 
-```
-git checkout load-test
-```
+---
 
-# Running the Test Locally
-## Step 1 — Open JMeter
-Launch **Apache JMeter** on your system.
+#  Spike Test Summary
 
+| Metric | Value |
+|--------|------|
+| Total Requests | 524,830 |
+| Average Response Time | 412 ms |
+| Maximum Response Time | 68,412 ms |
+| Throughput | 742.5 requests/sec |
+| Error Rate | 38.24% |
 
+---
 
-## Step 2 — Open the Test Plan
-Open the JMeter test plan file:
-```
-File → Open → Select the .jmx file
-```
+#  Phase-wise Performance
 
-## Step 3 — Verify CSV Dataset
-Ensure the **CSV Data Set Config** correctly references the dataset file containing the user credentials.
+---
 
+# Phase 1 — Baseline Load (30 Users)
 
-## Step 4 — Run the Test
-Click the **Start (▶) button** in JMeter to begin executing the test.
+##  Metrics
 
+| Metric | Value |
+|--------|------|
+| Average Response Time | 72 ms |
+| Throughput | 690 req/sec |
+| Error Rate | 32% |
 
-## Step 5 — View Results
-You can monitor the test results using the following JMeter listeners:
-* **View Results Tree**
-* **Summary Report**
-* **Aggregate Report**
+##  Observations
 
-These reports provide insights into response time, throughput, and error percentages during the test execution.
+- System stable  
+- Fast API responses  
+- Low latency  
+
+---
+
+# Phase 2 — Sudden Spike (30 → 310 Users)
+
+##  Metrics
+
+| Metric | Value |
+|--------|------|
+| Average Response Time | 158 ms |
+| Throughput | 812 req/sec |
+| Error Rate | 35.6% |
+
+##  Observations
+
+- Slight response time increase  
+- Throughput increased  
+- System remained stable  
+
+---
+
+# Phase 3 — Traffic Drop (310 → 450 → 390 Users)
+
+##  Metrics
+
+| Metric | Value |
+|--------|------|
+| Average Response Time | 285 ms |
+| Throughput | 770 req/sec |
+| Error Rate | 37.8% |
+
+##  Observations
+
+- System recovered partially  
+- Response time fluctuated  
+- Some APIs slowed down  
+
+---
+
+# Phase 4 — Peak Spike (Up to ~800 Users Combined)
+
+##  Metrics
+
+| Metric | Value |
+|--------|------|
+| Average Response Time | 742 ms |
+| Maximum Response Time | 68,412 ms |
+| Throughput | 742 req/sec |
+| Error Rate | 45.12% |
+
+---
+
+#  API Response Time During Peak Spike
+
+| API | Avg Response Time |
+|-----|-------------------|
+| Login | 520 ms |
+| Get User | 680 ms |
+| Get Beneficiary | 3240 ms |
+| Get Profile | 760 ms |
+| Edit Profile | 840 ms |
+| Register Save Child | 980 ms |
+| Tracking Save | 1120 ms |
+| Pregnant Women | 890 ms |
+| Get Incentive Management | 4120 ms |
+| General OPD | 1290 ms |
+
+---
+
+#  Error Analysis
+
+| API | Error Rate |
+|-----|------------|
+| Get User | 21.4% |
+| Get Beneficiary | 28.2% |
+| Login | 7.3% |
+| Get Incentive Management | 32.6% |
+| Disease Save APIs | 18% |
+| HYBC Save All | 100% |
+
+**Overall System Error Rate ≈ 38.24%**
+
+---
+
+#  Throughput Comparison
+
+| Phase | Throughput |
+|-------|------------|
+| Baseline | 690 req/sec |
+| Spike 1 | 812 req/sec |
+| Mid Load | 770 req/sec |
+| Peak Spike | 742 req/sec |
+
+---
+
+#  Observations
+
+- Throughput remained relatively stable during spikes  
+- Response time increased significantly during peak load  
+- Some APIs became slower under heavy traffic  
+- System handled sudden traffic changes without crash  
+- System recovery observed after load drop  
+
+---
+
+#  Final Conclusion
+
+- System handled sudden spikes successfully  
+- Performance degradation observed during peak load  
+- System recovered after traffic reduction  
+- Some APIs showed high latency during spike  
+- System remained operational under ~800 concurrent users  
+
+---
