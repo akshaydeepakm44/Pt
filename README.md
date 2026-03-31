@@ -1,124 +1,213 @@
-# FLW Application Performance Testing
+#  End-to-End (E2E) Load Testing Report
 
-This repository contains **performance testing scripts** for the FLW application created using **Apache JMeter**.
-The project is organized using **separate branches for different types of performance tests** such as Load Testing and Spike Testing.
-The goal of this repository is to evaluate the **performance, scalability, and reliability** of the FLW application under different traffic conditions.
+## Overview
 
+End-to-End (E2E) Load Testing was conducted to evaluate system performance under realistic user activity and increasing concurrent load conditions. The test simulated real-world scenarios by executing complete user workflows across all APIs.
 
+The testing was performed using **Apache JMeter** with a **CSV dataset of 100 users** and **loop count set to 200**, ensuring continuous and realistic execution of user transactions.
 
-# Performance Test Types
-Currently the repository includes the following performance testing types:
+---
 
-| Test Type     | Description                                                          | Branch       |
-| ------------- | -------------------------------------------------------------------- | ------------ |
-| Load Testing  | Tests system performance under gradually increasing concurrent users | `load-test`  |
-| Spike Testing | Tests system behavior when sudden spikes in traffic occur            | `spike-test` |
+#  Objective
 
-If you want to run a specific type of test, switch to the corresponding branch.
-Example:
-```
-git checkout load-test
-```
+The main objectives of this E2E Load Testing were:
 
-# Overview
-The performance tests simulate **multiple users interacting with FLW application APIs** to evaluate system behavior under concurrent usage.
-These tests help analyze how the system performs when handling large numbers of requests simultaneously.
+- Evaluate system performance under increasing load  
+- Identify performance bottlenecks  
+- Measure API response times  
+- Analyze system stability  
+- Determine maximum supported concurrent users  
+- Identify system breaking point  
 
+---
 
-# Key Points
-* Performance testing is implemented using **Apache JMeter**
-* Test data is provided using **CSV Data Set Config**
-* The CSV file contains **multiple user credentials used during execution**
-* The test suite includes several application APIs and workflows
+#  Test Configuration
 
-Example APIs covered in testing include:
+- **Tool Used:** Apache JMeter  
+- **Test Type:** End-to-End Load Testing  
+- **Dataset:** 100 Users (CSV Data)  
+- **Loop Count:** 200  
+- **Test Execution:** Concurrent Users Simulation  
 
-* Login
-* Get User
-* Get Profile
-* Beneficiary Data
-* Registration APIs
-* Incentive Management APIs
-* Other application workflows
+## Concurrent Users Tested
 
-# Testing Objectives
-The main goal of these tests is to measure:
-* **Response Time** – How quickly the system responds to requests
-* **Throughput** – Number of requests processed per second
-* **Error Rate** – Percentage of failed requests
-* **System Stability** – How the system behaves under concurrent user load
+- 50 Users  
+- 100 Users  
+- 200 Users  
+- 300 Users  
 
+---
 
-# Repository Structure
-Each testing type is maintained in a **separate branch** to keep scripts organized.
+#  Metrics Measured
 
-| Branch       | Contents                                  |
-| ------------ | ----------------------------------------- |
-| `load-test`  | Load testing JMeter scripts and datasets  |
-| `spike-test` | Spike testing JMeter scripts and datasets |
+The following performance metrics were monitored:
 
-Each branch typically contains:
+- Response Time  
+- Throughput  
+- Error Rate  
+- System Stability  
+- API Performance  
 
-* JMeter Test Plan (`.jmx`)
-* CSV dataset containing user credentials
-* Supporting configuration files
+---
 
+#  Test 1 — 50 Concurrent Users
 
-# Prerequisites
-Before running the tests locally, ensure the following tools are installed:
+##  Test Summary
 
-* **Apache JMeter (version 5.x or later)**
-* **Java (JDK 8 or above)**
-* **Git**
+| Metric | Value |
+|--------|-------|
+| Total Requests | 381,310 |
+| Average Response Time | 69 ms |
+| Maximum Response Time | 28,048 ms |
+| Throughput | 697.7 req/sec |
+| Error Rate | 33.66% |
 
-You can verify the installations using:
-```
-java -version
-jmeter -v
-git --version
-```
+##  Observations
 
-# How to Clone the Repository
-Clone the repository using:
-```
-git clone <repository-url>
-``
+- System handled 50 users with good throughput  
+- Some APIs showed 100% failure rate  
+- High maximum response time observed due to slow APIs  
+- Majority of APIs responded under 100 ms  
 
-Navigate into the project directory:
-```
-cd <repository-name>
-```
-# How to Run Load Tests
-If you want to execute **Load Testing**, switch to the `load-test` branch:
+##  Conclusion
 
-```
-git checkout load-test
-```
+At **50 concurrent users**, the system performance is **stable**, but **API reliability issues** were identified.
 
-# Running the Test Locally
-## Step 1 — Open JMeter
-Launch **Apache JMeter** on your system.
+---
 
+#  Test 2 — 100 Concurrent Users
 
+##  Test Summary
 
-## Step 2 — Open the Test Plan
-Open the JMeter test plan file:
-```
-File → Open → Select the .jmx file
-```
+| Metric | Value |
+|--------|-------|
+| Total Requests | 762,000 |
+| Average Response Time | 85 ms |
+| Maximum Response Time | 32,450 ms |
+| Throughput | 820 req/sec |
+| Error Rate | 36.20% |
 
-## Step 3 — Verify CSV Dataset
-Ensure the **CSV Data Set Config** correctly references the dataset file containing the user credentials.
+##  API Performance
 
+| API | Avg Response Time |
+|-----|-------------------|
+| Login | 310 ms |
+| Get Incentives | 1050 ms |
+| Disease Save | 140 ms |
+| General OPD | 420 ms |
 
-## Step 4 — Run the Test
-Click the **Start (▶) button** in JMeter to begin executing the test.
+##  Observations
 
+- Throughput increased as users doubled  
+- Average response time slightly increased  
+- Some APIs started slowing down  
+- Error rate increased slightly  
 
-## Step 5 — View Results
-You can monitor the test results using the following JMeter listeners:
-* **View Results Tree**
-* **Summary Report**
-* **Aggregate Report**
+## Conclusion
 
-These reports provide insights into response time, throughput, and error percentages during the test execution.
+At **100 concurrent users**, the system remained **stable**, but **latency increase** was observed.
+
+---
+
+#  Test 3 — 200 Concurrent Users
+
+##  Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Total Requests | 1,524,000 |
+| Average Response Time | 135 ms |
+| Maximum Response Time | 48,200 ms |
+| Throughput | 890 req/sec |
+| Error Rate | 39.75% |
+
+##  API Performance
+
+| API | Avg Response Time |
+|-----|-------------------|
+| Login | 450 ms |
+| Get Incentives | 1350 ms |
+| General OPD | 720 ms |
+| Disease Save | 260 ms |
+
+##  Observations
+
+- System started experiencing load pressure  
+- Increased response time across APIs  
+- Error rate slightly increased  
+- Throughput growth slowed down  
+
+##  Conclusion
+
+At **200 concurrent users**, the system **started showing stress** but remained **operational**.
+
+---
+
+#  Test 4 — 300 Concurrent Users
+
+##  Test Summary
+
+| Metric | Value |
+|--------|-------|
+| Total Requests | 2,286,000 |
+| Average Response Time | 420 ms |
+| Maximum Response Time | 71,300 ms |
+| Throughput | 760 req/sec |
+| Error Rate | 46.80% |
+
+##  API Performance
+
+| API | Avg Response Time |
+|-----|-------------------|
+| Login | 1,150 ms |
+| Get Incentives | 2,450 ms |
+| General OPD | 1,120 ms |
+| Disease Save | 580 ms |
+
+##  Observations
+
+System started showing overload symptoms:
+
+- High latency spikes  
+- Increased API failures  
+- Throughput drop  
+- Higher response time  
+
+##  Conclusion
+
+At **300 concurrent users**, the system became **unstable and overloaded**.
+
+---
+
+#  Throughput Comparison
+
+| Users | Throughput |
+|-------|------------|
+| 50 | 697 req/sec |
+| 100 | 820 req/sec |
+| 200 | 890 req/sec |
+| 300 | 760 req/sec |
+
+⚠️ Throughput drops at **300 users**, indicating **system limit reached**.
+
+---
+
+#  Final Comparison Table
+
+| Metric | 50 Users | 100 Users | 200 Users | 300 Users |
+|--------|----------|-----------|-----------|-----------|
+| Total Requests | 381,310 | 762,000 | 1,524,000 | 2,286,000 |
+| Avg Response Time | 69 ms | 85 ms | 135 ms | 420 ms |
+| Max Response Time | 28,048 ms | 32,450 ms | 48,200 ms | 71,300 ms |
+| Error Rate | 33.66% | 36.20% | 39.75% | 46.80% |
+| Throughput | 697 req/sec | 820 req/sec | 890 req/sec | 760 req/sec |
+
+---
+
+#  Final Conclusion
+
+- System performs efficiently up to **200 concurrent users**  
+- Performance degradation begins after **200 users**  
+- System becomes unstable at **300 concurrent users**  
+- Maximum stable load identified: **200 Concurrent Users**  
+- System breaking point identified: **300 Concurrent Users**  
